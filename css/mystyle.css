@@ -1,0 +1,35 @@
+
+/* input.dummy-input */
+#input_field_0
+{
+    border-bottom: none;
+}
+
+.fixed-ht
+{
+    height: 50px;
+}
+
+.vertical-align
+{
+    margin-top: 0px;
+    margin-bottom: 0px;
+    line-height: 50px;
+}
+
+.input-field-holder-border
+{
+    border: 1px solid #80deea;
+}
+
+/* input.bottom-borderless-input */
+/* #input_field_1, #input_field_2  */
+/* div > input
+{
+    border-bottom: none; 
+} */
+
+input:focus
+{
+    /* background-color: red; */
+}
