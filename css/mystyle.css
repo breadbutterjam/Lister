@@ -38,3 +38,9 @@ input:focus
 {
     /* background-color: red; */
 }
+
+.footer-buttons
+{
+    display: inline;
+    margin-right: 24px;
+}

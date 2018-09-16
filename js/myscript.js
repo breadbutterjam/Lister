@@ -94,20 +94,6 @@ function createListClicked(event)
 
 /* 
 
-funciton adds a check button
-
-*/
-function addCheckButton()
-{
-    let checkHTML = '<div class="check-button center-align"><a id="btnCheck" class="waves-effect waves-light btn">Check</a></div>'
-
-    $('.container').append(checkHTML);
-
-    $("#btnCheck").on("click", checkClicked)
-}
-
-/* 
-
 check answers
 
 */
@@ -117,19 +103,7 @@ function checkClicked(event)
 }
 
 
-/* 
 
-function adds a reset button. This is used after creating a list. 
-
-*/
-function addResetButton()
-{
-    let resetHTML = '<div class="reset-button center-align"><a id="btnReset" class="waves-effect waves-light btn">Reset</a></div>'
-
-    $('.container').append(resetHTML);
-
-    $("#btnReset").on("click", resetClicked)
-}
 
 /* 
 
@@ -201,7 +175,7 @@ function getListHTML()
      /* 
     working HTML. for 1 row, 1 column. 
     <div class="row">
-        <div class="col s3"></div>
+        <div class="col s3"></div> <!-- remove this three column to left align the input fields -->
         <div class="col s1 fixed-ht cyan lighten-3">
             <h5 class="vertical-align center-align">2</h5>
         </div>
@@ -214,7 +188,11 @@ function getListHTML()
 
     let retHTML = '';
 
-    let a_HTML = '<div class="row"><div class="col s3"></div><div class="col s1 fixed-ht cyan lighten-3"><h5 class="vertical-align center-align">'
+    // this html has a three column gap on the left. it makes the input field seem center aligned. 
+    // let a_HTML = '<div class="row"><div class="col s3"></div><div class="col s1 fixed-ht cyan lighten-3"><h5 class="vertical-align center-align">'
+    
+    //this html does NOT have a three column gap on the left, the input field is left aligned. 
+    let a_HTML = '<div class="row"><div class="col s1 fixed-ht cyan lighten-3"><h5 class="vertical-align center-align">'
     let b_HTML = '</h5></div><div class="input-field-holder-border col fixed-ht s5"><input class="bottom-borderless-input" placeholder="" id="input_field_'
     let c_HTML = '" type="text"></div></div>'
 
@@ -331,4 +309,57 @@ function getSelectHTML(arrKeys)
     let retHTML = selectHTMLStart + seelctOption + selectHTMLEnd;
 
     return retHTML;
+}
+
+
+/* 
+
+function will return button html based on the parameters supplied
+
+*/
+function getButtonHTML(classes, btnID, label)
+{
+    let classString = "";
+    for (let i=0; i<classes.length; i++)
+    {
+        classString += String(classes[i]);
+        classString += " ";
+    }
+
+    let btnHTML = '<div class="'+ classString +'"><a id="'+ btnID +'" class="waves-effect waves-light btn">'+ label +'</a></div>';
+
+    return btnHTML;
+}
+
+
+/* 
+
+function adds a reset button. This is used after creating a list. 
+
+*/
+function addResetButton()
+{
+    // let resetHTML = '<div class="reset-button center-align"><a id="btnReset" class="waves-effect waves-light btn">Reset</a></div>'
+
+    let resetHTML = getButtonHTML(['reset-button', 'footer-buttons'], 'btnReset', 'Reset')
+
+    $('.footerButtonContainer').append(resetHTML);
+
+    $("#btnReset").on("click", resetClicked)
+}
+
+/* 
+
+funciton adds a check button
+
+*/
+function addCheckButton()
+{
+    // let checkHTML = '<div class="check-button center-align"><a id="btnCheck" class="waves-effect waves-light btn">Check</a></div>'
+
+    let checkHTML = getButtonHTML(['check-button', 'footer-buttons'], 'btnCheck', 'Check')
+
+    $('.footerButtonContainer').append(checkHTML);
+
+    $("#btnCheck").on("click", checkClicked)
 }
