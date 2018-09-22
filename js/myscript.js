@@ -41,6 +41,7 @@ function bodyLoaded()
 
     addEventListeners();
 
+
 }
 
 /* function adds eventlisteners */
@@ -89,6 +90,8 @@ function createListClicked(event)
 
     addResetButton();
 
+
+    $($('.bottom-borderless-input')[0]).focus();
 }
 
 
@@ -99,11 +102,105 @@ check answers
 */
 function checkClicked(event)
 {
+    let selectedValue = $('select').val();
+    let correctOptions = data.optionData[selectedValue].data;
+
+    let correctOptionsWithoutCase = ConvertAllToLowerCase(correctOptions)
+
+    let enteredOptions = [];
+    let currOption;
+    let currInputField;
+    for (let i=0; i<$('.bottom-borderless-input').length; i++)
+    {
+        
+        currInputField = $('.bottom-borderless-input')[i] 
+        currOption = currInputField.value.trim();
+        
+        //currently not considering case
+        currOption = currOption.toLowerCase();
+        
+        if (currOption === "")
+        {
+            //if no value is entered. 
+            markIncorrect(currInputField)
+        }
+        else
+        {
+            enteredOptions.push(currInputField)
+        }
+
+    }
+
+    // stores number of filled options
+    let filledOptions = enteredOptions.length;
+
+    console.log({enteredOptions})
+
+    let currListItemString;
+    //loop through filled options and check if filled option is correct. 
+    for (i=0; i<filledOptions; i++)
+    {
+        
+        currListItemString = enteredOptions[i].value.toLowerCase();
+        if (correctOptionsWithoutCase.indexOf(currListItemString) > -1)
+        {
+            //if answer option is correct
+            markCorrect(enteredOptions[i]);
+        }
+        else
+        {
+            markIncorrect(enteredOptions[i]);
+        }
+    }
+
+
+
+    // console.log({correctOptions})
+    // console.log({enteredOptions})
+
+}
+
+/* 
+
+function takes input field as parameter and marks it as incorrect. 
+
+*/
+function markIncorrect(inputField)
+{
+    $(inputField).parent().addClass('incorrect-answer');
+    $($(inputField).parent().parent().children()[0]).removeClass("cyan").addClass("red")
+
+}
+
+/* 
+
+function takes input field as parameter and marks it as correct. 
+
+*/
+function markCorrect(inputField)
+{
+    $(inputField).parent().addClass('correct-answer');
+    $($(inputField).parent().parent().children()[0]).removeClass("cyan").addClass("green")
 
 }
 
 
+/* 
 
+function returns array with all options in lower case. 
+This will be used to check for correct answer if case sensitivity is not to be considered. 
+
+*/
+function ConvertAllToLowerCase(arrParam)
+{
+    let arrToRet = [];
+    for (let i=0; i<arrParam.length; i++)
+    {
+        arrToRet.push(arrParam[i].toLowerCase());
+    }
+
+    return arrToRet;
+}
 
 /* 
 
