@@ -16,6 +16,9 @@ let rowsList;
 //number of columns in the list. by default it will be 1. 
 let columnsList;
 
+//boolean used to check if all answer options are correct. 
+let isAllCorrect = true;
+
 /* 
 
 initialize variables to default values
@@ -30,6 +33,8 @@ function initializeToDefault()
     $("#listCountInputField").focus();
 
     isListPredefined = false;
+
+    isAllCorrect = true;
 }
 
 
@@ -41,8 +46,25 @@ function bodyLoaded()
 
     addEventListeners();
 
+    initModals();
 
 }
+
+
+/* 
+
+function initializes modals
+
+*/
+let elems; 
+let instances;
+function initModals()
+{
+    elems = document.querySelectorAll('.modal');
+    instances = M.Modal.init(elems);
+}
+
+
 
 /* function adds eventlisteners */
 function addEventListeners()
@@ -90,9 +112,26 @@ function createListClicked(event)
 
     addResetButton();
 
+    addResetOptionButton();
 
+    // disable drop down
+    $('select').prop("disabled", true);
+
+    setFocusToFirstField();
+
+    enableCreateListButton(false);
+}
+
+/* 
+
+function sets focus to first input field
+
+*/
+function setFocusToFirstField()
+{
     $($('.bottom-borderless-input')[0]).focus();
 }
+
 
 
 /* 
@@ -102,6 +141,7 @@ check answers
 */
 function checkClicked(event)
 {
+    
     let selectedValue = $('select').val();
     let correctOptions = data.optionData[selectedValue].data;
 
@@ -134,7 +174,9 @@ function checkClicked(event)
     // stores number of filled options
     let filledOptions = enteredOptions.length;
 
-    console.log({enteredOptions})
+    let markedCorrect = [];
+
+    // console.log({enteredOptions})
 
     let currListItemString;
     //loop through filled options and check if filled option is correct. 
@@ -142,10 +184,11 @@ function checkClicked(event)
     {
         
         currListItemString = enteredOptions[i].value.toLowerCase();
-        if (correctOptionsWithoutCase.indexOf(currListItemString) > -1)
+        if (correctOptionsWithoutCase.indexOf(currListItemString) > -1 && markedCorrect.indexOf(currListItemString) === -1)
         {
             //if answer option is correct
             markCorrect(enteredOptions[i]);
+            markedCorrect.push(currListItemString)
         }
         else
         {
@@ -154,11 +197,64 @@ function checkClicked(event)
     }
 
 
+    if (isAllCorrect)
+    {
+        AllAnswersCorrectPopup();
+
+    }
+    else
+    {
+        SomeAnswersIncorrect();
+    }
+
 
     // console.log({correctOptions})
     // console.log({enteredOptions})
+    enableCheckButton(false);
 
 }
+
+/* 
+
+function used to enable check button;
+pass parameter 
+
+*/
+function enableCheckButton(enableButton)
+{
+    if (enableButton)
+    {
+        $("#btnCheck").removeClass("disabled");
+    }
+    else
+    {
+        $("#btnCheck").addClass("disabled");
+    }
+    
+}
+
+
+/* 
+
+function launches the correct popup
+
+*/
+function AllAnswersCorrectPopup()
+{
+    $('#congratulation_modal').modal('open');
+}
+
+
+/* 
+
+function launches the incorrect popup
+
+*/
+function SomeAnswersIncorrect()
+{
+    $('#oops_modal').modal('open');
+}
+
 
 /* 
 
@@ -167,6 +263,7 @@ function takes input field as parameter and marks it as incorrect.
 */
 function markIncorrect(inputField)
 {
+    isAllCorrect = false;
     $(inputField).parent().addClass('incorrect-answer');
     $($(inputField).parent().parent().children()[0]).removeClass("cyan").addClass("red")
 
@@ -204,25 +301,65 @@ function ConvertAllToLowerCase(arrParam)
 
 /* 
 
+handler for clicking on reset options button
+
+*/
+function resetOptionsClicked(event)
+{
+    $('.bottom-borderless-input').val("");
+
+    enableCheckButton(true);
+    
+    resetCorrectIncorrectMarkings();
+
+    isAllCorrect = true;
+
+    setFocusToFirstField();
+}
+
+/* 
+
+funtion removes all correct incorrect markings
+
+*/
+function resetCorrectIncorrectMarkings()
+{
+    $('.red').addClass('cyan').removeClass('red');
+    $('.green').addClass('cyan').removeClass('green');
+
+    $('.correct-answer').removeClass('correct-answer');
+    $('.incorrect-answer').removeClass('incorrect-answer');
+}
+
+
+/* 
+
 handler for clicking on reset button
 
 */
 function resetClicked()
 {
-    console.log("reset clicked");
+    // console.log("reset clicked");
 
     emptyListContainer();
 
     removeResetButton();
     
     if (isListPredefined)
-    removeCheckButton();
+    {
+        removeCheckButton();
+        removeResetOptionsButton();
+    }
+    
 
     initializeToDefault();
 
     $('select').val("custom");
     selectOptionChanged();
 
+    $('select').prop("disabled", false);
+
+    
 }
 
 
@@ -252,6 +389,20 @@ function removeCheckButton()
 
     //remove reset button
     $('.check-button').remove();
+}
+
+/* 
+
+removes reset options button
+
+*/
+function removeResetOptionsButton()
+{
+    //remove handler
+    $("#btnResetOptions").off("click", resetOptionsClicked)
+
+    //remove reset button
+    $('.reset-options-button').remove();
 }
 
 /* 
@@ -431,6 +582,25 @@ function getButtonHTML(classes, btnID, label)
 
 /* 
 
+function adds a reset options button. 
+clicking this button will reset the list back to its initial state with all fields emtpy. 
+
+*/
+function addResetOptionButton()
+{
+
+    let resetOptionsHTML = getButtonHTML(['reset-options-button', 'footer-buttons'], 'btnResetOptions', 'Reset Options')
+
+    $('.footerButtonContainer').append(resetOptionsHTML);
+
+    $("#btnResetOptions").on("click", resetOptionsClicked)
+
+}
+
+
+
+/* 
+
 function adds a reset button. This is used after creating a list. 
 
 */
@@ -459,4 +629,33 @@ function addCheckButton()
     $('.footerButtonContainer').append(checkHTML);
 
     $("#btnCheck").on("click", checkClicked)
+}
+
+
+/* 
+
+function returns random number between min and max. 
+If only one is specified, min is assumed 0
+max is assumed infinity. 
+
+*/
+function getRandomBetween(min, max)
+{
+    let rand = Math.random();
+    let diff = max - min; 
+
+    let num = min + Math.round(rand * diff);
+    return num; 
+}
+
+function check(min, max)
+{
+    let randomNumber; 
+    let count = 0; 
+    do 
+    {
+        randomNumber = getRandomBetween(min, max);
+        count++
+        console.log(count, " - ", randomNumber)
+    }while (count < 500 && randomNumber < max)
 }
