@@ -216,6 +216,40 @@ function checkClicked(event)
 
 /* 
 
+function used to add the view correct answer button
+
+*/
+function addViewCorrectAnswerButton()
+{
+    let viewCorrectAnswerButtonHTML = getButtonHTML(['view-correct-answer-button', 'footer-buttons'], 'btnViewCorrectAnswer', 'View Correct Answer');
+    //getButtonHTML(classes, btnID, label)
+    //getButtonHTML(['reset-options-button', 'footer-buttons'], 'btnResetOptions', 'Reset Options')
+
+    $('.footerButtonContainer').append(viewCorrectAnswerButtonHTML);
+
+    $('#btnViewCorrectAnswer').on('click', ViewCorrectAnswerButtonClicked)
+}
+
+
+/* 
+
+function handler for click of view correct answer button. 
+It will populate the incorrect answers with the correct answers. 
+View correct answer button should toggle to view my answer button
+incorrect answers that are overridden should be indicated with another color. 
+
+*/
+function ViewCorrectAnswerButtonClicked(event)
+{
+    
+
+}
+
+
+
+
+/* 
+
 function used to enable check button;
 pass parameter 
 
